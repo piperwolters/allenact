@@ -959,7 +959,9 @@ class SingleProcessVectorSampledTasks(object):
         """Generator for working with Tasks/TaskSampler."""
 
         task_sampler = make_sampler_fn(**sampler_fn_args)
+        print("task sampler:", task_sampler)
         current_task = task_sampler.next_task()
+        print("current task:", current_task)
 
         if current_task is None:
             raise RuntimeError(
@@ -973,6 +975,7 @@ class SingleProcessVectorSampledTasks(object):
             command, data = yield "started"
 
             while command != CLOSE_COMMAND:
+                print("command.......", command)
                 if command == STEP_COMMAND:
                     step_result: RLStepResult = current_task.step(data)
                     if current_task.is_done():
@@ -1019,7 +1022,9 @@ class SingleProcessVectorSampledTasks(object):
                     command == OBSERVATION_SPACE_COMMAND
                     or command == ACTION_SPACE_COMMAND
                 ):
+                    print("Observation or action, calling getattr()", current_task)
                     res = getattr(current_task, command)
+                    print("res:", res)
                     command, data = yield res
 
                 elif command == CALL_COMMAND:

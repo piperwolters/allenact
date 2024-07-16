@@ -454,6 +454,7 @@ class OnPolicyRLEngine(object):
     def remove_paused(self, observations):
         paused, keep, running = [], [], []
         for it, obs in enumerate(observations):
+            print("it, obs:", it, ", ", obs)
             if obs is None:
                 paused.append(it)
             else:
@@ -463,6 +464,7 @@ class OnPolicyRLEngine(object):
         for p in reversed(paused):
             self.vector_tasks.pause_at(p)
 
+        print("in remove_paused()...", running)
         # Group samplers along new dim:
         batch = batch_observations(running, device=self.device)
 
@@ -474,6 +476,7 @@ class OnPolicyRLEngine(object):
         visualizer: Optional[VizSuite] = None,
     ):
 
+        print("storage_to_initialize:", storage_to_initialize)
         keep: Optional[List] = None
         if visualizer is not None or (
             storage_to_initialize is not None
@@ -481,6 +484,7 @@ class OnPolicyRLEngine(object):
         ):
             # No rollout storage, thus we are not
             observations = self.vector_tasks.get_observations()
+            print("self.vector_tasks.get_observations():", observations)
 
             npaused, keep, batch = self.remove_paused(observations)
             observations = (
